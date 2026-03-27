@@ -21,20 +21,187 @@ header {
   font-weight: bold;
 }
 
-.lang-toggle {
-  text-align: center;
-  margin: 10px;
+.container { padding: 15px; }
+
+.category h2 {
+  border-bottom: 2px solid #38bdf8;
+  color: #38bdf8;
 }
 
-.lang-toggle button {
-  padding: 8px 15px;
-  margin: 5px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  background: #38bdf8;
-  color: black;
-  font-weight: bold;
+.item {
+  padding: 10px;
+  background: #1e293b;
+  margin-bottom: 8px;
+  border-radius: 8px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.controls {
+  margin-top: 5px;
+}
+
+button {
+  padding: 5px 10px;
+  margin: 2px;
+}
+
+.bill-box {
+  position: fixed;
+  bottom: 80px;
+  left: 10px;
+  right: 10px;
+  background: #1e293b;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.order-btn {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  padding: 15px;
+  background: #22c55e;
+  font-size: 18px;
+  border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>🍔 ByteZone</header>
+
+<div class="container" id="menu"></div>
+
+<div class="bill-box">
+  Name: <input id="name"><br>
+  Table/Parcel: <input id="type"><br>
+  Total: ₹<span id="total">0</span><br>
+  <button onclick="payNow()">Pay via UPI</button>
+  <button onclick="sendBill()">Send Bill</button>
+</div>
+
+<button class="order-btn" onclick="placeOrder()">Generate Order</button>
+
+<script>
+const phone = "917605858467";
+const upi = "mahantajoy1234-3@oksbi"; // CHANGE THIS
+
+const itemsData = [
+["Chicken Steamed Momo",50],
+["Chicken Fried Momo",60],
+["Chicken Pan-Fried Momo",80],
+["Veg Chow Mein Half",25],
+["Veg Chow Mein Full",45],
+["Egg Chow Mein Half",30],
+["Egg Chow Mein Full",50],
+["Chicken Chow Mein Half",40],
+["Chicken Chow Mein Full",60],
+["Mixed Chow Mein Half",45],
+["Mixed Chow Mein Full",70],
+["Egg Roll",35],
+["Chicken Roll",50],
+["Egg Chicken Roll",60],
+["Chicken Lollipop Fry Single",40],
+["Chicken Lollipop Fry Double",70],
+["Chicken Lollipop Chilli 4 pcs",170]
+];
+
+function render(){
+  const menu=document.getElementById("menu");
+  menu.innerHTML="";
+
+  itemsData.forEach(item=>{
+    const div=document.createElement("div");
+    div.className="item";
+
+    div.innerHTML=`
+      <div class="row">
+        <span class="name">${item[0]}</span>
+        <span>₹${item[1]}</span>
+      </div>
+      <div class="controls">
+        <button onclick="qty(this,-1)">-</button>
+        <span class="q">0</span>
+        <button onclick="qty(this,1)">+</button>
+      </div>
+    `;
+
+    menu.appendChild(div);
+  });
+}
+
+function qty(btn,val){
+  const q=btn.parentElement.querySelector(".q");
+  let num=parseInt(q.innerText);
+  num+=val;
+  if(num<0) num=0;
+  q.innerText=num;
+  calc();
+}
+
+function calc(){
+  let total=0;
+  document.querySelectorAll(".item").forEach((item,i)=>{
+    const q=parseInt(item.querySelector(".q").innerText);
+    total+=q*itemsData[i][1];
+  });
+  document.getElementById("total").innerText=total;
+}
+
+function getOrder(){
+  let order=[];
+  document.querySelectorAll(".item").forEach((item,i)=>{
+    const q=parseInt(item.querySelector(".q").innerText);
+    if(q>0){
+      order.push(itemsData[i][0]+" x "+q);
+    }
+  });
+  return order;
+}
+
+function placeOrder(){
+  const order=getOrder();
+  if(order.length===0){ alert("Add item"); return; }
+  alert("Order ready. Now pay.");
+}
+
+function payNow(){
+  const total=document.getElementById("total").innerText;
+  if(total==0){ alert("No items"); return; }
+
+  let link=`upi://pay?pa=${upi}&pn=ByteZone&am=${total}&cu=INR`;
+  window.location.href=link;
+}
+
+function sendBill(){
+  const name=document.getElementById("name").value;
+  const type=document.getElementById("type").value;
+  const order=getOrder();
+  const total=document.getElementById("total").innerText;
+
+  let msg="ByteZone Bill%0A";
+  msg+="Name: "+name+"%0A";
+  msg+="Type: "+type+"%0A%0A";
+
+  order.forEach(i=> msg+=i+"%0A");
+
+  msg+="%0ATotal: ₹"+total;
+
+  let url=`https://wa.me/${phone}?text=${msg}`;
+  window.open(url,"_blank");
+}
+
+render();
+</script>
+
+</body>
+</html>  font-weight: bold;
 }
 
 .container {
