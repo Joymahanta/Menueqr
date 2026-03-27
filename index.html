@@ -23,18 +23,201 @@ header {
 
 .container { padding: 15px; }
 
-.category h2 {
-  border-bottom: 2px solid #38bdf8;
-  color: #38bdf8;
-}
-
 .item {
-  padding: 10px;
+  padding: 12px;
   background: #1e293b;
-  margin-bottom: 8px;
-  border-radius: 8px;
+  margin-bottom: 10px;
+  border-radius: 10px;
 }
 
+.row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.controls {
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+}
+
+.qty-btn {
+  background: #38bdf8;
+  font-weight: bold;
+}
+
+.bill-box {
+  background: #1e293b;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 10px;
+}
+
+.order-btn {
+  width: calc(100% - 20px);
+  margin: 10px;
+  padding: 15px;
+  background: #22c55e;
+  font-size: 18px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 6px;
+  margin: 5px 0;
+  border-radius: 6px;
+  border: none;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>🍔 ByteZone</header>
+
+<div class="container" id="menu"></div>
+
+<div class="bill-box">
+  <input id="name" placeholder="Customer Name">
+  <input id="type" placeholder="Parcel / Dine-in">
+  Total: ₹<span id="total">0</span><br><br>
+  <button onclick="payNow()">Pay via UPI</button>
+  <button onclick="sendBill()">Send Bill</button>
+</div>
+
+<button class="order-btn" onclick="placeOrder()">Order Now</button>
+
+<script>
+const phone = "917605858467";
+const upi = "mahantajoy1234-3@oksbi";
+
+const itemsData = [
+["Chicken Steamed Momo (6 pcs)",50],
+["Chicken Fried Momo (6 pcs)",60],
+["Chicken Pan-Fried Momo (6 pcs)",80],
+["Veg Chow Mein Half",25],
+["Veg Chow Mein Full",45],
+["Egg Chow Mein Half",30],
+["Egg Chow Mein Full",50],
+["Chicken Chow Mein Half",40],
+["Chicken Chow Mein Full",60],
+["Mixed Chow Mein Half",45],
+["Mixed Chow Mein Full",70],
+["Egg Roll",35],
+["Chicken Roll",50],
+["Egg Chicken Roll",60],
+["Chicken Lollipop Fry Single",40],
+["Chicken Lollipop Fry Double",70],
+["Chicken Lollipop Chilli (4 pcs)",170]
+];
+
+function render(){
+  const menu=document.getElementById("menu");
+  menu.innerHTML="";
+
+  itemsData.forEach(item=>{
+    const div=document.createElement("div");
+    div.className="item";
+
+    div.innerHTML=`
+      <div class="row">
+        <span>${item[0]}</span>
+        <span>₹${item[1]}</span>
+      </div>
+
+      <div class="controls">
+        <button class="qty-btn" onclick="qty(this,-1)">-</button>
+        <span class="q">0</span>
+        <button class="qty-btn" onclick="qty(this,1)">+</button>
+      </div>
+    `;
+
+    menu.appendChild(div);
+  });
+}
+
+function qty(btn,val){
+  const q=btn.parentElement.querySelector(".q");
+  let num=parseInt(q.innerText);
+  num+=val;
+  if(num<0) num=0;
+  q.innerText=num;
+  calc();
+}
+
+function calc(){
+  let total=0;
+  document.querySelectorAll(".item").forEach((item,i)=>{
+    const q=parseInt(item.querySelector(".q").innerText);
+    total+=q*itemsData[i][1];
+  });
+  document.getElementById("total").innerText=total;
+}
+
+function getOrder(){
+  let order=[];
+  document.querySelectorAll(".item").forEach((item,i)=>{
+    const q=parseInt(item.querySelector(".q").innerText);
+    if(q>0){
+      order.push(itemsData[i][0]+" x "+q);
+    }
+  });
+  return order;
+}
+
+function placeOrder(){
+  const order=getOrder();
+  if(order.length===0){
+    alert("Add item first");
+    return;
+  }
+  alert("Order ready. Please proceed to payment.");
+}
+
+function payNow(){
+  const total=document.getElementById("total").innerText;
+  if(total==0){
+    alert("No items selected");
+    return;
+  }
+
+  let link=`upi://pay?pa=${upi}&pn=ByteZone&am=${total}&cu=INR`;
+  window.location.href=link;
+}
+
+function sendBill(){
+  const name=document.getElementById("name").value || "Customer";
+  const type=document.getElementById("type").value || "Not specified";
+  const order=getOrder();
+  const total=document.getElementById("total").innerText;
+
+  let msg="ByteZone Bill%0A";
+  msg+="Name: "+name+"%0A";
+  msg+="Type: "+type+"%0A%0A";
+
+  order.forEach(i=> msg+=i+"%0A");
+
+  msg+="%0ATotal: ₹"+total;
+
+  let url=`https://wa.me/${phone}?text=${msg}`;
+  window.open(url,"_blank");
+}
+
+render();
+</script>
+
+</body>
+</html>
 .row {
   display: flex;
   justify-content: space-between;
