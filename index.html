@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Joy Fast Food Menu</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    header {
+      text-align: center;
+      padding: 15px;
+      background: #1e293b;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .lang-toggle {
+      text-align: center;
+      margin: 10px;
+    }
+
+    .lang-toggle button {
+      padding: 8px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #38bdf8;
+      color: black;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 15px;
+    }
+
+    .category {
+      margin-bottom: 20px;
+    }
+
+    .category h2 {
+      border-bottom: 2px solid #38bdf8;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+      color: #38bdf8;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background: #1e293b;
+      margin-bottom: 8px;
+      border-radius: 8px;
+    }
+
+    .item-name {
+      font-weight: bold;
+    }
+
+    .price {
+      color: #38bdf8;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+
+<body>
+
+<header id="title">🍔 Joy Fast Food</header>
+
+<div class="lang-toggle">
+  <button onclick="setLang('en')">English</button>
+  <button onclick="setLang('bn')">বাংলা</button>
+</div>
+
+<div class="container" id="menu"></div>
+
+<footer id="footer">Scan • Order • Enjoy 😎</footer>
+
+<script>
+  const data = {
+    en: {
+      title: "🍔 Joy Fast Food",
+      footer: "Scan • Order • Enjoy 😎",
+      menu: [
+        {
+          category: "🥟 Momos",
+          items: [
+            ["Chicken Steamed Momo", "₹80"],
+            ["Chicken Fried Momo", "₹90"],
+            ["Chicken Pan-Fried Momo", "₹100"]
+          ]
+        },
+        {
+          category: "🍜 Chow Mein",
+          items: [
+            ["Veg Chow Mein", "₹70"],
+            ["Egg Chow Mein", "₹80"],
+            ["Chicken Chow Mein", "₹90"],
+            ["Mixed Chow Mein", "₹100"]
+          ]
+        },
+        {
+          category: "🌯 Rolls",
+          items: [
+            ["Egg Roll", "₹40"],
+            ["Chicken Roll", "₹60"],
+            ["Mixed Roll", "₹70"]
+          ]
+        },
+        {
+          category: "🍗 Chicken Lollipop",
+          items: [
+            ["Chicken Lollipop (Dry)", "₹120"],
+            ["Chicken Lollipop (Gravy)", "₹140"]
+          ]
+        }
+      ]
+    },
+
+    bn: {
+      title: "🍔 জয় ফাস্ট ফুড",
+      footer: "স্ক্যান করুন • অর্ডার করুন • উপভোগ করুন 😎",
+      menu: [
+        {
+          category: "🥟 মোমো",
+          items: [
+            ["চিকেন স্টিমড মোমো", "₹80"],
+            ["চিকেন ফ্রাইড মোমো", "₹90"],
+            ["চিকেন প্যান-ফ্রাইড মোমো", "₹100"]
+          ]
+        },
+        {
+          category: "🍜 চাওমিন",
+          items: [
+            ["ভেজ চাওমিন", "₹70"],
+            ["এগ চাওমিন", "₹80"],
+            ["চিকেন চাওমিন", "₹90"],
+            ["মিক্সড চাওমিন", "₹100"]
+          ]
+        },
+        {
+          category: "🌯 রোল",
+          items: [
+            ["এগ রোল", "₹40"],
+            ["চিকেন রোল", "₹60"],
+            ["মিক্সড রোল", "₹70"]
+          ]
+        },
+        {
+          category: "🍗 চিকেন ললিপপ",
+          items: [
+            ["চিকেন ললিপপ (ড্রাই)", "₹120"],
+            ["চিকেন ললিপপ (গ্রেভি)", "₹140"]
+          ]
+        }
+      ]
+    }
+  };
+
+  function setLang(lang) {
+    const menuDiv = document.getElementById("menu");
+    const title = document.getElementById("title");
+    const footer = document.getElementById("footer");
+
+    title.innerText = data[lang].title;
+    footer.innerText = data[lang].footer;
+
+    menuDiv.innerHTML = "";
+
+    data[lang].menu.forEach(section => {
+      const category = document.createElement("div");
+      category.className = "category";
+
+      const heading = document.createElement("h2");
+      heading.innerText = section.category;
+
+      category.appendChild(heading);
+
+      section.items.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item";
+
+        div.innerHTML = `
+          <div class="item-name">${item[0]}</div>
+          <div class="price">${item[1]}</div>
+        `;
+
+        category.appendChild(div);
+      });
+
+      menuDiv.appendChild(category);
+    });
+  }
+
+  // default language
+  setLang('en');
+</script>
+
+</body>
+</html>
