@@ -1,87 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Joy Fast Food Menu</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ByteZone Menu</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: white;
+}
 
-    header {
-      text-align: center;
-      padding: 15px;
-      background: #1e293b;
-      font-size: 24px;
-      font-weight: bold;
-    }
+header {
+  text-align: center;
+  padding: 15px;
+  background: #1e293b;
+  font-size: 24px;
+  font-weight: bold;
+}
 
-    .lang-toggle {
-      text-align: center;
-      margin: 10px;
-    }
+.lang-toggle {
+  text-align: center;
+  margin: 10px;
+}
 
-    .lang-toggle button {
-      padding: 8px 15px;
-      margin: 5px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #38bdf8;
-      color: black;
-      font-weight: bold;
-    }
+.lang-toggle button {
+  padding: 8px 15px;
+  margin: 5px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #38bdf8;
+  color: black;
+  font-weight: bold;
+}
 
-    .container {
-      padding: 15px;
-    }
+.container {
+  padding: 15px;
+}
 
-    .category {
-      margin-bottom: 20px;
-    }
+.category {
+  margin-bottom: 20px;
+}
 
-    .category h2 {
-      border-bottom: 2px solid #38bdf8;
-      padding-bottom: 5px;
-      margin-bottom: 10px;
-      color: #38bdf8;
-    }
+.category h2 {
+  border-bottom: 2px solid #38bdf8;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  color: #38bdf8;
+}
 
-    .item {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px;
-      background: #1e293b;
-      margin-bottom: 8px;
-      border-radius: 8px;
-    }
+.item {
+  padding: 10px;
+  background: #1e293b;
+  margin-bottom: 8px;
+  border-radius: 8px;
+}
 
-    .item-name {
-      font-weight: bold;
-    }
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    .price {
-      color: #38bdf8;
-      font-weight: bold;
-    }
+.controls {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-    footer {
-      text-align: center;
-      padding: 10px;
-      font-size: 14px;
-      opacity: 0.7;
-    }
-  </style>
+button.qty {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 5px;
+  background: #38bdf8;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.order-btn {
+  position: fixed;
+  bottom: 15px;
+  left: 10px;
+  right: 10px;
+  padding: 15px;
+  background: #22c55e;
+  color: black;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+footer {
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  opacity: 0.7;
+}
+</style>
 </head>
 
 <body>
 
-<header id="title">🍔 Joy Fast Food</header>
+<header id="title">🍔 ByteZone</header>
 
 <div class="lang-toggle">
   <button onclick="setLang('en')">English</button>
@@ -90,126 +116,192 @@
 
 <div class="container" id="menu"></div>
 
-<footer id="footer">Scan • Order • Enjoy 😎</footer>
+<button class="order-btn" onclick="placeOrder()">Order Now</button>
+
+<footer id="footer">Packing charge ₹5 extra</footer>
 
 <script>
-  const data = {
-    en: {
-      title: "🍔 Joy Fast Food",
-      footer: "Scan • Order • Enjoy 😎",
-      menu: [
-        {
-          category: "🥟 Momos",
-          items: [
-            ["Chicken Steamed Momo", "₹80"],
-            ["Chicken Fried Momo", "₹90"],
-            ["Chicken Pan-Fried Momo", "₹100"]
-          ]
-        },
-        {
-          category: "🍜 Chow Mein",
-          items: [
-            ["Veg Chow Mein", "₹70"],
-            ["Egg Chow Mein", "₹80"],
-            ["Chicken Chow Mein", "₹90"],
-            ["Mixed Chow Mein", "₹100"]
-          ]
-        },
-        {
-          category: "🌯 Rolls",
-          items: [
-            ["Egg Roll", "₹40"],
-            ["Chicken Roll", "₹60"],
-            ["Mixed Roll", "₹70"]
-          ]
-        },
-        {
-          category: "🍗 Chicken Lollipop",
-          items: [
-            ["Chicken Lollipop (Dry)", "₹120"],
-            ["Chicken Lollipop (Gravy)", "₹140"]
-          ]
-        }
-      ]
-    },
+const phone = "917605858467";
+let currentLang = "en";
 
-    bn: {
-      title: "🍔 জয় ফাস্ট ফুড",
-      footer: "স্ক্যান করুন • অর্ডার করুন • উপভোগ করুন 😎",
-      menu: [
-        {
-          category: "🥟 মোমো",
-          items: [
-            ["চিকেন স্টিমড মোমো", "₹80"],
-            ["চিকেন ফ্রাইড মোমো", "₹90"],
-            ["চিকেন প্যান-ফ্রাইড মোমো", "₹100"]
-          ]
-        },
-        {
-          category: "🍜 চাওমিন",
-          items: [
-            ["ভেজ চাওমিন", "₹70"],
-            ["এগ চাওমিন", "₹80"],
-            ["চিকেন চাওমিন", "₹90"],
-            ["মিক্সড চাওমিন", "₹100"]
-          ]
-        },
-        {
-          category: "🌯 রোল",
-          items: [
-            ["এগ রোল", "₹40"],
-            ["চিকেন রোল", "₹60"],
-            ["মিক্সড রোল", "₹70"]
-          ]
-        },
-        {
-          category: "🍗 চিকেন ললিপপ",
-          items: [
-            ["চিকেন ললিপপ (ড্রাই)", "₹120"],
-            ["চিকেন ললিপপ (গ্রেভি)", "₹140"]
-          ]
-        }
-      ]
-    }
-  };
+const data = {
+  en: {
+    title: "🍔 ByteZone",
+    footer: "Packing charge ₹5 extra",
+    menu: [
+      {
+        category: "🥟 Momos (6 pcs)",
+        items: [
+          ["Chicken Steamed Momo", "₹50"],
+          ["Chicken Fried Momo", "₹60"],
+          ["Chicken Pan-Fried Momo", "₹80"]
+        ]
+      },
+      {
+        category: "🍜 Chow Mein",
+        items: [
+          ["Veg Chow Mein Half", "₹25"],
+          ["Veg Chow Mein Full", "₹45"],
+          ["Egg Chow Mein Half", "₹30"],
+          ["Egg Chow Mein Full", "₹50"],
+          ["Chicken Chow Mein Half", "₹40"],
+          ["Chicken Chow Mein Full", "₹60"],
+          ["Mixed Chow Mein Half", "₹45"],
+          ["Mixed Chow Mein Full", "₹70"]
+        ]
+      },
+      {
+        category: "🌯 Rolls",
+        items: [
+          ["Egg Roll", "₹35"],
+          ["Chicken Roll", "₹50"],
+          ["Egg Chicken Roll", "₹60"]
+        ]
+      },
+      {
+        category: "🍗 Lollipop",
+        items: [
+          ["Chicken Lollipop Fry (Single)", "₹40"],
+          ["Chicken Lollipop Fry (Double)", "₹70"],
+          ["Chicken Lollipop Chilli (4 pcs)", "₹170"]
+        ]
+      }
+    ]
+  },
 
-  function setLang(lang) {
-    const menuDiv = document.getElementById("menu");
-    const title = document.getElementById("title");
-    const footer = document.getElementById("footer");
+  bn: {
+    title: "🍔 বাইটজোন",
+    footer: "প্যাকিং চার্জ ₹৫ অতিরিক্ত",
+    menu: [
+      {
+        category: "🥟 মোমো (৬ পিস)",
+        items: [
+          ["চিকেন স্টিমড মোমো", "₹50"],
+          ["চিকেন ফ্রাইড মোমো", "₹60"],
+          ["চিকেন প্যান-ফ্রাইড মোমো", "₹80"]
+        ]
+      },
+      {
+        category: "🍜 চাওমিন",
+        items: [
+          ["ভেজ হাফ", "₹25"],
+          ["ভেজ ফুল", "₹45"],
+          ["এগ হাফ", "₹30"],
+          ["এগ ফুল", "₹50"],
+          ["চিকেন হাফ", "₹40"],
+          ["চিকেন ফুল", "₹60"],
+          ["মিক্সড হাফ", "₹45"],
+          ["মিক্সড ফুল", "₹70"]
+        ]
+      },
+      {
+        category: "🌯 রোল",
+        items: [
+          ["এগ রোল", "₹35"],
+          ["চিকেন রোল", "₹50"],
+          ["এগ চিকেন রোল", "₹60"]
+        ]
+      },
+      {
+        category: "🍗 ললিপপ",
+        items: [
+          ["ফ্রাই সিঙ্গেল", "₹40"],
+          ["ফ্রাই ডাবল", "₹70"],
+          ["চিলি (৪ পিস)", "₹170"]
+        ]
+      }
+    ]
+  }
+};
 
-    title.innerText = data[lang].title;
-    footer.innerText = data[lang].footer;
+function setLang(lang) {
+  currentLang = lang;
+  const menuDiv = document.getElementById("menu");
+  const title = document.getElementById("title");
+  const footer = document.getElementById("footer");
 
-    menuDiv.innerHTML = "";
+  title.innerText = data[lang].title;
+  footer.innerText = data[lang].footer;
 
-    data[lang].menu.forEach(section => {
-      const category = document.createElement("div");
-      category.className = "category";
+  menuDiv.innerHTML = "";
 
-      const heading = document.createElement("h2");
-      heading.innerText = section.category;
+  data[lang].menu.forEach(section => {
+    const category = document.createElement("div");
+    category.className = "category";
 
-      category.appendChild(heading);
+    const heading = document.createElement("h2");
+    heading.innerText = section.category;
+    category.appendChild(heading);
 
-      section.items.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "item";
+    section.items.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "item";
 
-        div.innerHTML = `
-          <div class="item-name">${item[0]}</div>
+      div.innerHTML = `
+        <div class="row">
+          <div>
+            <input type="checkbox" class="check">
+            <span class="name">${item[0]}</span>
+          </div>
           <div class="price">${item[1]}</div>
-        `;
+        </div>
 
-        category.appendChild(div);
-      });
+        <div class="controls">
+          <button class="qty" onclick="changeQty(this, -1)">-</button>
+          <span class="qty-value">0</span>
+          <button class="qty" onclick="changeQty(this, 1)">+</button>
+        </div>
+      `;
 
-      menuDiv.appendChild(category);
+      category.appendChild(div);
     });
+
+    menuDiv.appendChild(category);
+  });
+}
+
+function changeQty(btn, change) {
+  const qtySpan = btn.parentElement.querySelector(".qty-value");
+  let qty = parseInt(qtySpan.innerText);
+
+  qty += change;
+  if (qty < 0) qty = 0;
+
+  qtySpan.innerText = qty;
+
+  const checkbox = btn.closest(".item").querySelector(".check");
+  checkbox.checked = qty > 0;
+}
+
+function placeOrder() {
+  const items = document.querySelectorAll(".item");
+  let order = [];
+
+  items.forEach(item => {
+    const qty = parseInt(item.querySelector(".qty-value").innerText);
+    if (qty > 0) {
+      const name = item.querySelector(".name").innerText;
+      order.push(`${name} x ${qty}`);
+    }
+  });
+
+  if (order.length === 0) {
+    alert("Please add item");
+    return;
   }
 
-  // default language
-  setLang('en');
+  let type = prompt("Type 'parcel' or 'dine-in'");
+  if (!type) return;
+
+  let message = "Order from ByteZone:%0A";
+  order.forEach(i => message += "- " + i + "%0A");
+  message += "%0AType: " + type;
+
+  let url = `https://wa.me/${phone}?text=${message}`;
+  window.open(url, "_blank");
+}
+
+setLang("en");
 </script>
 
 </body>
