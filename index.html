@@ -1,10 +1,38 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Updated Index</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            color: #333;
+        }
+        header, footer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Updated Page</h1>
-    <p>Current Date and Time (UTC - YYYY-MM-DD HH:MM:SS formatted): 2026-03-27 16:57:51</p>
-    <p>Current User's Login: Joymahanta</p>
+    <header>
+        <h1>Welcome to the Updated Page</h1>
+    </header>
+    <main>
+        <p>Current Date and Time (UTC): <span id="datetime">2026-03-27 17:00:33</span></p>
+        <p>Current User's Login: Joymahanta</p>
+    </main>
+    <footer>
+        <p>&copy; 2026 Joymahanta</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentDateTime = new Date().toISOString();
+            document.getElementById('datetime').textContent = currentDateTime;
+        });
+    </script>
 </body>
 </html>
