@@ -1,6 +1,5 @@
-const phone = "917605858467";
+const API_URL = "PASTE_YOUR_SCRIPT_URL_HERE";
 const upi = "mahantajoy1234-3@oksbi";
-const API_URL = "https://script.google.com/macros/s/AKfycbzHpV-T456UFaAzNDC5qypN6ioWcBZUUOqyq3Mgaa5YDiUitgQXgbP7AgxqNIIy1sXY/exec";
 
 const items = [
 ["Chicken Steamed Momo (6 pcs)",50],
@@ -115,22 +114,23 @@ function payNow(){
 }
 
 function sendBill(){
-  let name=document.getElementById("name").value||"Customer";
-  let phoneNum=document.getElementById("phone").value || "";
-  let type=document.getElementById("type").value;
-  let order=getOrder();
-  let total=document.getElementById("total").innerText;
+  let name = document.getElementById("name").value || "Customer";
+  let phoneInput = document.getElementById("phone").value.trim();
+  let type = document.getElementById("type").value;
+  let order = getOrder();
+  let total = document.getElementById("total").innerText;
 
-  if(order.length===0){
+  if(order.length === 0){
     alert("No items");
     return;
   }
 
-  if(phoneNum.length < 10){
-    alert("Enter valid phone number");
+  if(phoneInput.length !== 10){
+    alert("Enter 10 digit mobile number");
     return;
   }
 
+  let customerPhone = "91" + phoneInput;
   let itemsText = order.join(", ");
 
   fetch(API_URL, {
@@ -138,20 +138,24 @@ function sendBill(){
     mode: "no-cors",
     body: JSON.stringify({
       name: name,
-      phone: phoneNum,
+      phone: customerPhone,
       type: type,
       items: itemsText,
       total: total
     })
   });
 
-  let msg="ByteZone Bill%0A";
-  msg+="Name: "+name+"%0A";
-  msg+="Type: "+type+"%0A%0A";
-  order.forEach(i=>msg+=i+"%0A");
-  msg+="%0ATotal: "+total;
+  let shopNumber = "917605858467";
 
-  window.open(`https://wa.me/${phoneNum}?text=${msg}`);
+  let msg = "🆕 New Order - ByteZone%0A";
+  msg += "Name: " + name + "%0A";
+  msg += "Type: " + type + "%0A";
+  msg += "Customer: " + phoneInput + "%0A%0A";
+
+  order.forEach(i => msg += i + "%0A");
+  msg += "%0ATotal: " + total;
+
+  window.open(`https://wa.me/${shopNumber}?text=${msg}`);
 }
 
 render();
