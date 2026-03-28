@@ -1,7 +1,5 @@
 const phone = "917605858467";
 const upi = "mahantajoy1234-3@oksbi";
-
-// 🔥 PASTE YOUR GOOGLE SCRIPT URL HERE
 const API_URL = "https://script.google.com/macros/s/AKfycbzHpV-T456UFaAzNDC5qypN6ioWcBZUUOqyq3Mgaa5YDiUitgQXgbP7AgxqNIIy1sXY/exec";
 
 const items = [
@@ -43,7 +41,6 @@ function render(){
         <button class="qty-btn" onclick="q(this,1)">+</button>
       </div>
     `;
-
     m.appendChild(d);
   });
 }
@@ -92,6 +89,7 @@ function calc(){
 function clearCart(){
   document.querySelectorAll(".qty").forEach(q=> q.innerText = 0);
   document.getElementById("name").value = "";
+  document.getElementById("phone").value = "";
   document.getElementById("type").value = "dine";
   calc();
 }
@@ -107,15 +105,6 @@ function getOrder(){
   return arr;
 }
 
-function order(){
-  let o=getOrder();
-  if(o.length===0){
-    alert("Add item first");
-    return;
-  }
-  alert("Proceed to payment");
-}
-
 function payNow(){
   let total=document.getElementById("total").innerText.replace("₹","");
   if(total==0){
@@ -127,7 +116,8 @@ function payNow(){
 
 function sendBill(){
   let name=document.getElementById("name").value||"Customer";
-  let type=document.getElementById("type").value||"N/A";
+  let phoneNum=document.getElementById("phone").value || "";
+  let type=document.getElementById("type").value;
   let order=getOrder();
   let total=document.getElementById("total").innerText;
 
@@ -136,29 +126,32 @@ function sendBill(){
     return;
   }
 
+  if(phoneNum.length < 10){
+    alert("Enter valid phone number");
+    return;
+  }
+
   let itemsText = order.join(", ");
 
-  // 📊 SEND TO GOOGLE SHEET
   fetch(API_URL, {
     method: "POST",
+    mode: "no-cors",
     body: JSON.stringify({
       name: name,
+      phone: phoneNum,
       type: type,
       items: itemsText,
       total: total
     })
   });
 
-  // 📲 WHATSAPP BILL
   let msg="ByteZone Bill%0A";
   msg+="Name: "+name+"%0A";
   msg+="Type: "+type+"%0A%0A";
-
   order.forEach(i=>msg+=i+"%0A");
-
   msg+="%0ATotal: "+total;
 
-  window.open(`https://wa.me/${phone}?text=${msg}`);
+  window.open(`https://wa.me/${phoneNum}?text=${msg}`);
 }
 
 render();
