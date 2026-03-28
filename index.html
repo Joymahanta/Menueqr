@@ -12,29 +12,40 @@
 
 <header>🍔 ByteZone</header>
 
+<div class="top-bar">
+  <div>🛒 Items: <span id="cartCount">0</span></div>
+  <button onclick="clearCart()">Clear Order</button>
+</div>
+
 <div class="container" id="menu"></div>
 
 <div class="bill">
+
   <input id="name" placeholder="Customer Name">
-  <input id="type" placeholder="Parcel / Dine-in">
 
-  <div class="bill-items" id="billItems"></div>
+  <label>Order Type:</label>
+  <select id="type" onchange="calc()">
+    <option value="dine">Dine-in</option>
+    <option value="parcel">Parcel</option>
+  </select>
 
-  <div class="total-line">
-    <span>Subtotal</span>
-    <span id="subtotal">₹0</span>
-  </div>
+  <div id="billItems"></div>
 
-  <div class="total-line">
-    <span>Packing</span>
-    <span id="packing">₹0</span>
-  </div>
+  <div class="line"><span>Subtotal</span><span id="subtotal">₹0</span></div>
+  <div class="line"><span>Packing</span><span id="packing">₹0</span></div>
+  <div class="line total"><span>Total</span><span id="total">₹0</span></div>
 
-  <div class="total-line bold">
-    <span>Total</span>
-    <span id="total">₹0</span>
-  </div>
+  <button onclick="payNow()">Pay via UPI</button>
+  <button onclick="sendBill()">Send Bill</button>
 
+</div>
+
+<button class="order-btn" onclick="order()">Order Now</button>
+
+<script src="script.js"></script>
+
+</body>
+</html>
   <br>
   <button onclick="payNow()">Pay via UPI</button>
   <button onclick="sendBill()">Send Bill</button>
