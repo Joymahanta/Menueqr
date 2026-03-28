@@ -1,38 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kitchen Dashboard</title>
-
-<style>
-body {
-  font-family: Arial;
-  background: #0f172a;
-  color: white;
-}
-
-.card {
-  background: #1e293b;
-  margin: 10px;
-  padding: 10px;
-  border-radius: 10px;
-}
-
-button {
-  padding: 8px;
-  margin-top: 10px;
-}
-</style>
-</head>
-
-<body>
-
-<h2 style="text-align:center;">🍳 Live Orders</h2>
-
-<div id="orders"></div>
-
 <script>
-const API = "YOUR_SCRIPT_URL_HERE";
+const API = "https://script.google.com/macros/s/AKfycbzHpV-T456UFaAzNDC5qypN6ioWcBZUUOqyq3Mgaa5YDiUitgQXgbP7AgxqNIIy1sXY/exec";
 
 async function loadOrders(){
   let res = await fetch(API);
@@ -52,7 +19,7 @@ async function loadOrders(){
         🧾 ${row[3]}<br>
         💰 ${row[4]}<br>
 
-        <button onclick="markDone(${i}, '${row[1]}')">Mark Done</button>
+        <button onclick="markDone(${i+1}, '${row[1]}')">Done</button>
       </div>
     `;
   }
@@ -60,17 +27,17 @@ async function loadOrders(){
   document.getElementById("orders").innerHTML = html;
 }
 
-function markDone(rowIndex, phone){
-  // WhatsApp confirm
+async function markDone(row, phone){
+  // 🔄 Update status in sheet
+  await fetch(API + "?action=update&row=" + row);
+
+  // 📲 WhatsApp confirmation
   let msg = "Your order from ByteZone is ready!";
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
 
-  alert("Mark as done manually in sheet (Google limitation)");
+  loadOrders();
 }
 
 setInterval(loadOrders, 3000);
 loadOrders();
 </script>
-
-</body>
-</html>
