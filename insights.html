@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ByteZone Insights</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f8fafc;
+  margin: 0;
+}
+
+.header {
+  text-align: center;
+  padding: 15px;
+  background: #dc2626;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.container {
+  padding: 10px;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th {
+  background: #dc2626;
+  color: white;
+  padding: 8px;
+}
+
+td {
+  padding: 8px;
+  text-align: center;
+}
+
+tr:nth-child(even) {
+  background: #f1f5f9;
+}
+
+/* CARDS */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.card {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.big {
+  font-size: 18px;
+  font-weight: bold;
+  color: #dc2626;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">📊 ByteZone Insights</div>
+
+<div class="container">
+
+<div class="cards">
+  <div class="card"><div>Total Sales</div><div class="big" id="sales">0</div></div>
+  <div class="card"><div>Total Orders</div><div class="big" id="orders">0</div></div>
+  <div class="card"><div>Customers</div><div class="big" id="customers">0</div></div>
+  <div class="card"><div>Repeat Customers</div><div class="big" id="repeat">0</div></div>
+  <div class="card"><div>Avg Order Value</div><div class="big" id="avg">0</div></div>
+</div>
+
+<h3>📈 Orders by Hour</h3>
+<canvas id="chart"></canvas>
+
+<h3>👥 Customer List</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>Orders</th>
+</tr>
+</thead>
+<tbody id="table"></tbody>
+</table>
+
+</div>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbz17MiXqsjlAe6FyaJXPQ0r42-RSupYxVWCLH0tA3mzJsnKMtIyq07exh9569aZ82Pt/exec";
+
+async function loadData(){
+  let res = await fetch(API + "?t=" + Date.now());
+  let data = await res.json();
+
+  let totalSales = 0;
+  let totalOrders = data.length - 1;
+
+  let customers = {};
+  let hours = {};
+
+  for(let i=1;i<data.length;i++){
+    let row = data[i];
+
+    let phone = row[1];
+    let total = parseInt(row[4].replace("₹","")) || 0;
+
+    totalSales += total;
+
+    // customer count
+    if(!customers[phone]){
+      customers[phone] = {
+        name: row[0],
+        count: 0
+      };
+    }
+    customers[phone].count++;
+
+    // hour analysis
+    let time = new Date(row[6]);
+    let hour = time.getHours();
+
+    hours[hour] = (hours[hour] || 0) + 1;
+  }
+
+  let uniqueCustomers = Object.keys(customers).length;
+
+  let repeat = Object.values(customers)
+    .filter(c => c.count > 1).length;
+
+  let avg = totalOrders ? (totalSales / totalOrders).toFixed(0) : 0;
+
+  document.getElementById("sales").innerText = "₹" + totalSales;
+  document.getElementById("orders").innerText = totalOrders;
+  document.getElementById("customers").innerText = uniqueCustomers;
+  document.getElementById("repeat").innerText = repeat;
+  document.getElementById("avg").innerText = "₹" + avg;
+
+  // table
+  let html = "";
+  for(let c in customers){
+    html += `
+      <tr>
+        <td>${customers[c].name}</td>
+        <td>${c}</td>
+        <td>${customers[c].count}</td>
+      </tr>
+    `;
+  }
+  document.getElementById("table").innerHTML = html;
+
+  // chart
+  let labels = Object.keys(hours);
+  let values = Object.values(hours);
+
+  new Chart(document.getElementById("chart"), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Orders",
+        data: values
+      }]
+    }
+  });
+}
+
+loadData();
+</script>
+
+</body>
+</html>
