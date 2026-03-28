@@ -2,7 +2,7 @@ const phone = "917605858467";
 const upi = "mahantajoy1234-3@oksbi";
 
 // 🔥 PASTE YOUR GOOGLE SCRIPT URL HERE
-const API_URL = "https://script.google.com/macros/s/AKfycbzhs8BDoSpWdTfXXFj7Q1sMy-FKuaEkWxDr5CX5PFXHzXwsubyMR3GaMhVWM3ZRRmWz/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzHpV-T456UFaAzNDC5qypN6ioWcBZUUOqyq3Mgaa5YDiUitgQXgbP7AgxqNIIy1sXY/exec";
 
 const items = [
 ["Chicken Steamed Momo (6 pcs)",50],
