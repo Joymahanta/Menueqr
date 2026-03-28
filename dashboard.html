@@ -2,103 +2,136 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kitchen Dashboard</title>
+<title>ByteZone Kitchen</title>
 
 <style>
 body {
-  font-family: Arial;
-  background: #0f172a;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #020617, #0f172a);
   color: white;
-  margin: 0;
-}
-
-h2 {
-  text-align: center;
-  padding: 10px;
-  background: #1e293b;
-  margin: 0;
-}
-
-#orders {
-  padding: 10px;
-}
-
-/* CARD DESIGN */
-.card {
-  background: #1e293b;
-  margin-bottom: 12px;
-  padding: 12px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
 
 /* HEADER */
-.card-header {
+.header {
+  text-align: center;
+  padding: 15px;
+  font-size: 22px;
+  font-weight: bold;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+}
+
+/* GRID */
+#orders {
+  padding: 12px;
+  display: grid;
+  gap: 12px;
+}
+
+/* CARD */
+.card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  border-radius: 14px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+/* TOP */
+.top {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+.name {
   font-size: 18px;
   font-weight: bold;
 }
 
 /* TAG */
 .tag {
-  padding: 3px 8px;
-  border-radius: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
   font-size: 12px;
+  font-weight: bold;
 }
 
-.dine { background: #22c55e; }
-.parcel { background: #f59e0b; }
+.dine {
+  background: #22c55e;
+  color: black;
+}
+
+.parcel {
+  background: #f59e0b;
+  color: black;
+}
 
 /* SECTION */
 .section {
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 14px;
+  opacity: 0.9;
 }
 
-/* ITEMS */
+/* ITEMS BOX */
 .items {
-  margin-top: 5px;
+  background: rgba(0,0,0,0.3);
+  padding: 8px;
+  border-radius: 8px;
+  margin-top: 6px;
   line-height: 1.5;
+}
+
+/* PRICE */
+.price {
+  font-size: 16px;
+  font-weight: bold;
+  color: #38bdf8;
 }
 
 /* TIMER */
 .timer {
   margin-top: 8px;
+  font-size: 15px;
   color: #38bdf8;
-  font-weight: bold;
 }
 
-/* BUTTONS */
-.buttons {
-  margin-top: 10px;
-}
-
-button {
-  padding: 6px 8px;
-  border: none;
-  border-radius: 6px;
-  margin: 2px;
-  font-size: 13px;
+/* BUTTON GROUP */
+.time-group {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
 }
 
 .time-btn {
+  flex: 1;
   background: #334155;
   color: white;
+  border-radius: 6px;
+  padding: 6px;
+  font-size: 12px;
 }
 
+/* DONE BUTTON */
 .done-btn {
-  background: #22c55e;
   width: 100%;
-  margin-top: 8px;
-  font-size: 15px;
+  margin-top: 10px;
+  padding: 10px;
+  background: #22c55e;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🍳 ByteZone Kitchen</h2>
+<div class="header">🍳 ByteZone Kitchen</div>
 
 <div id="orders"></div>
 
@@ -109,7 +142,7 @@ button {
 <script>
 const API = "https://script.google.com/macros/s/AKfycbz17MiXqsjlAe6FyaJXPQ0r42-RSupYxVWCLH0tA3mzJsnKMtIyq07exh9569aZ82Pt/exec";
 
-let lastOrderCount = 0;
+let lastCount = 0;
 let timers = {};
 
 async function loadOrders(){
@@ -117,41 +150,41 @@ async function loadOrders(){
   let data = await res.json();
 
   let html = "";
-  let currentCount = 0;
+  let count = 0;
 
-  // 🔥 REVERSE → latest first
   for(let i=data.length-1;i>=1;i--){
     let row = data[i];
 
     if(row[5] === "Done") continue;
 
-    currentCount++;
+    count++;
 
     let typeClass = row[2] === "parcel" ? "parcel" : "dine";
 
     html += `
       <div class="card">
 
-        <div class="card-header">
-          <span>${row[0]}</span>
-          <span class="tag ${typeClass}">${row[2]}</span>
+        <div class="top">
+          <div class="name">${row[0]}</div>
+          <div class="tag ${typeClass}">${row[2]}</div>
         </div>
 
         <div class="section">
           📞 ${row[1]}
         </div>
 
-        <div class="section items">
-          🧾 ${row[3]}
+        <div class="section">
+          🧾 Items:
+          <div class="items">${row[3]}</div>
         </div>
 
-        <div class="section">
+        <div class="section price">
           💰 ${row[4]}
         </div>
 
         <div class="section">
           ⏱ Set Time:
-          <div class="buttons">
+          <div class="time-group">
             ${[1,5,10,15,20].map(t => 
               `<button class="time-btn" onclick="startTimer(${i+1}, ${t}, '${row[1]}')">${t}m</button>`
             ).join("")}
@@ -168,35 +201,33 @@ async function loadOrders(){
     `;
   }
 
-  if(currentCount > lastOrderCount){
+  if(count > lastCount){
     document.getElementById("sound").play();
   }
 
-  lastOrderCount = currentCount;
+  lastCount = count;
 
   document.getElementById("orders").innerHTML = html;
 }
 
 function startTimer(row, minutes, phone){
-  let totalSeconds = minutes * 60;
+  let total = minutes * 60;
 
   let msg = `Your order from ByteZone will be ready in ${minutes} minutes`;
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
 
-  if(timers[row]){
-    clearInterval(timers[row]);
-  }
+  if(timers[row]) clearInterval(timers[row]);
 
   timers[row] = setInterval(()=>{
-    totalSeconds--;
+    total--;
 
-    let min = Math.floor(totalSeconds / 60);
-    let sec = totalSeconds % 60;
+    let m = Math.floor(total/60);
+    let s = total % 60;
 
     document.getElementById(`timer-${row}`).innerText =
-      `⏳ ${min}:${sec.toString().padStart(2,"0")}`;
+      `⏳ ${m}:${s.toString().padStart(2,"0")}`;
 
-    if(totalSeconds <= 0){
+    if(total <= 0){
       clearInterval(timers[row]);
       alert("⚠️ Order delayed!");
       document.getElementById("sound").play();
@@ -208,9 +239,7 @@ function startTimer(row, minutes, phone){
 async function markDone(row, phone){
   await fetch(API + "?action=update&row=" + row);
 
-  if(timers[row]){
-    clearInterval(timers[row]);
-  }
+  if(timers[row]) clearInterval(timers[row]);
 
   let msg = "Your order from ByteZone is ready!";
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
