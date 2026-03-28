@@ -13,6 +13,12 @@ header {
   font-weight: bold;
 }
 
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
 .container {
   padding: 10px;
 }
@@ -34,7 +40,47 @@ header {
 }
 
 button {
-  padding: 5px 10px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+}
+
+.qty-btn {
+  background: #38bdf8;
+}
+
+.bill {
+  background: #1e293b;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.line {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+}
+
+.total {
+  font-weight: bold;
+}
+
+.order-btn {
+  width: calc(100% - 20px);
+  margin: 10px;
+  padding: 15px;
+  background: #22c55e;
+  font-size: 18px;
+}
+
+input, select {
+  width: 100%;
+  margin: 5px 0;
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
+}  padding: 5px 10px;
   border-radius: 6px;
   border: none;
 }
