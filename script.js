@@ -1,4 +1,4 @@
-const API_URL = "PASTE_YOUR_SCRIPT_URL_HERE";
+const API_URL = "https://script.google.com/macros/s/AKfycbz17MiXqsjlAe6FyaJXPQ0r42-RSupYxVWCLH0tA3mzJsnKMtIyq07exh9569aZ82Pt/exec";
 const upi = "mahantajoy1234-3@oksbi";
 
 const items = [
