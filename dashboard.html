@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchen Dashboard</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+}
+
+.card {
+  background: #1e293b;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+button {
+  padding: 8px;
+  margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2 style="text-align:center;">🍳 Live Orders</h2>
+
+<div id="orders"></div>
+
+<script>
+const API = "YOUR_SCRIPT_URL_HERE";
+
+async function loadOrders(){
+  let res = await fetch(API);
+  let data = await res.json();
+
+  let html = "";
+
+  for(let i=1;i<data.length;i++){
+    let row = data[i];
+
+    if(row[5] === "Done") continue;
+
+    html += `
+      <div class="card">
+        <b>${row[0]}</b> (${row[2]})<br>
+        📞 ${row[1]}<br>
+        🧾 ${row[3]}<br>
+        💰 ${row[4]}<br>
+
+        <button onclick="markDone(${i}, '${row[1]}')">Mark Done</button>
+      </div>
+    `;
+  }
+
+  document.getElementById("orders").innerHTML = html;
+}
+
+function markDone(rowIndex, phone){
+  // WhatsApp confirm
+  let msg = "Your order from ByteZone is ready!";
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
+
+  alert("Mark as done manually in sheet (Google limitation)");
+}
+
+setInterval(loadOrders, 3000);
+loadOrders();
+</script>
+
+</body>
+</html>
