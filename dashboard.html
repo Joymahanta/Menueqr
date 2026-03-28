@@ -31,37 +31,32 @@ button {
 <div id="orders"></div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbz17MiXqsjlAe6FyaJXPQ0r42-RSupYxVWCLH0tA3mzJsnKMtIyq07exh9569aZ82Pt/exec";
+const API = "PASTE_YOUR_SCRIPT_URL_HERE";
 
 async function loadOrders(){
-  try{
-    let res = await fetch(API + "?t=" + Date.now());
-    let data = await res.json();
+  let res = await fetch(API + "?t=" + Date.now());
+  let data = await res.json();
 
-    let html = "";
+  let html = "";
 
-    for(let i=1;i<data.length;i++){
-      let row = data[i];
+  for(let i=1;i<data.length;i++){
+    let row = data[i];
 
-      if(row[5] === "Done") continue;
+    if(row[5] === "Done") continue;
 
-      html += `
-        <div class="card">
-          <b>${row[0]}</b> (${row[2]})<br>
-          📞 ${row[1]}<br>
-          🧾 ${row[3]}<br>
-          💰 ${row[4]}<br>
+    html += `
+      <div class="card">
+        <b>${row[0]}</b> (${row[2]})<br>
+        📞 ${row[1]}<br>
+        🧾 ${row[3]}<br>
+        💰 ${row[4]}<br>
 
-          <button onclick="markDone(${i+1}, '${row[1]}')">Done</button>
-        </div>
-      `;
-    }
-
-    document.getElementById("orders").innerHTML = html;
-
-  }catch(e){
-    console.log("Fetch error", e);
+        <button onclick="markDone(${i+1}, '${row[1]}')">Done</button>
+      </div>
+    `;
   }
+
+  document.getElementById("orders").innerHTML = html;
 }
 
 async function markDone(row, phone){
