@@ -9,30 +9,97 @@ body {
   font-family: Arial;
   background: #0f172a;
   color: white;
+  margin: 0;
 }
 
+h2 {
+  text-align: center;
+  padding: 10px;
+  background: #1e293b;
+  margin: 0;
+}
+
+#orders {
+  padding: 10px;
+}
+
+/* CARD DESIGN */
 .card {
   background: #1e293b;
-  margin: 10px;
-  padding: 10px;
-  border-radius: 10px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+/* HEADER */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* TAG */
+.tag {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.dine { background: #22c55e; }
+.parcel { background: #f59e0b; }
+
+/* SECTION */
+.section {
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+/* ITEMS */
+.items {
+  margin-top: 5px;
+  line-height: 1.5;
+}
+
+/* TIMER */
+.timer {
+  margin-top: 8px;
+  color: #38bdf8;
+  font-weight: bold;
+}
+
+/* BUTTONS */
+.buttons {
+  margin-top: 10px;
 }
 
 button {
-  padding: 6px;
-  margin: 3px;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 6px;
+  margin: 2px;
+  font-size: 13px;
 }
 
-.timer {
-  margin-top: 5px;
-  color: #38bdf8;
+.time-btn {
+  background: #334155;
+  color: white;
+}
+
+.done-btn {
+  background: #22c55e;
+  width: 100%;
+  margin-top: 8px;
+  font-size: 15px;
 }
 </style>
 </head>
 
 <body>
 
-<h2 style="text-align:center;">🍳 Live Orders</h2>
+<h2>🍳 ByteZone Kitchen</h2>
+
 <div id="orders"></div>
 
 <audio id="sound">
@@ -40,7 +107,7 @@ button {
 </audio>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbz17MiXqsjlAe6FyaJXPQ0r42-RSupYxVWCLH0tA3mzJsnKMtIyq07exh9569aZ82Pt/exec";
+const API = "PASTE_YOUR_SCRIPT_URL_HERE";
 
 let lastOrderCount = 0;
 let timers = {};
@@ -52,33 +119,55 @@ async function loadOrders(){
   let html = "";
   let currentCount = 0;
 
-  for(let i=1;i<data.length;i++){
+  // 🔥 REVERSE → latest first
+  for(let i=data.length-1;i>=1;i--){
     let row = data[i];
 
     if(row[5] === "Done") continue;
 
     currentCount++;
 
+    let typeClass = row[2] === "parcel" ? "parcel" : "dine";
+
     html += `
       <div class="card">
-        <b>${row[0]}</b> (${row[2]})<br>
-        📞 ${row[1]}<br>
-        🧾 ${row[3]}<br>
-        💰 ${row[4]}<br>
 
-        ⏱️ Set Time:<br>
-        ${[1,5,10,15,20].map(t => 
-          `<button onclick="startTimer(${i+1}, ${t}, '${row[1]}')">${t}m</button>`
-        ).join("")}
+        <div class="card-header">
+          <span>${row[0]}</span>
+          <span class="tag ${typeClass}">${row[2]}</span>
+        </div>
+
+        <div class="section">
+          📞 ${row[1]}
+        </div>
+
+        <div class="section items">
+          🧾 ${row[3]}
+        </div>
+
+        <div class="section">
+          💰 ${row[4]}
+        </div>
+
+        <div class="section">
+          ⏱ Set Time:
+          <div class="buttons">
+            ${[1,5,10,15,20].map(t => 
+              `<button class="time-btn" onclick="startTimer(${i+1}, ${t}, '${row[1]}')">${t}m</button>`
+            ).join("")}
+          </div>
+        </div>
 
         <div class="timer" id="timer-${i+1}"></div>
 
-        <button onclick="markDone(${i+1}, '${row[1]}')">✅ Done</button>
+        <button class="done-btn" onclick="markDone(${i+1}, '${row[1]}')">
+          ✅ Mark Done
+        </button>
+
       </div>
     `;
   }
 
-  // 🔔 New order sound
   if(currentCount > lastOrderCount){
     document.getElementById("sound").play();
   }
@@ -91,7 +180,6 @@ async function loadOrders(){
 function startTimer(row, minutes, phone){
   let totalSeconds = minutes * 60;
 
-  // 📲 Send time to customer
   let msg = `Your order from ByteZone will be ready in ${minutes} minutes`;
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
 
@@ -110,9 +198,7 @@ function startTimer(row, minutes, phone){
 
     if(totalSeconds <= 0){
       clearInterval(timers[row]);
-
-      // 🚨 ALERT + SOUND
-      alert("⚠️ Order time exceeded!");
+      alert("⚠️ Order delayed!");
       document.getElementById("sound").play();
     }
 
