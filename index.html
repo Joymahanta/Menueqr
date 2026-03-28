@@ -21,6 +21,7 @@
 <div class="bill">
 
   <input id="name" placeholder="Customer Name">
+  <input id="phone" placeholder="Customer Phone">
 
   <label>Order Type:</label>
   <select id="type" onchange="calc()">
@@ -34,16 +35,13 @@
   <div class="line"><span>Packing</span><span id="packing">₹0</span></div>
   <div class="line total"><span>Total</span><span id="total">₹0</span></div>
 
-  <div style="margin-top:10px;">
-    <button onclick="payNow()">Pay via UPI</button>
-    <button onclick="sendBill()">Send Bill</button>
-  </div>
+  <button onclick="payNow()">Pay via UPI</button>
+  <button onclick="sendBill()">Send Bill</button>
 
 </div>
 
 <button class="order-btn" onclick="order()">Order Now</button>
 
 <script src="script.js"></script>
-
 </body>
 </html>
