@@ -1,6 +1,9 @@
 const phone = "917605858467";
 const upi = "mahantajoy1234-3@oksbi";
 
+// 🔥 PASTE YOUR GOOGLE SCRIPT URL HERE
+const API_URL = "https://script.google.com/macros/s/AKfycbzhs8BDoSpWdTfXXFj7Q1sMy-FKuaEkWxDr5CX5PFXHzXwsubyMR3GaMhVWM3ZRRmWz/exec";
+
 const items = [
 ["Chicken Steamed Momo (6 pcs)",50],
 ["Chicken Fried Momo (6 pcs)",60],
@@ -40,6 +43,7 @@ function render(){
         <button class="qty-btn" onclick="q(this,1)">+</button>
       </div>
     `;
+
     m.appendChild(d);
   });
 }
@@ -55,21 +59,27 @@ function q(btn,val){
 
 function calc(){
   let subtotal = 0;
+  let totalQty = 0;
   let billHTML = "";
 
   document.querySelectorAll(".item").forEach((el,i)=>{
     let q = parseInt(el.querySelector(".qty").innerText);
+
     if(q>0){
       let price = items[i][1];
-      let total = q * price;
-      subtotal += total;
+      let itemTotal = q * price;
 
-      billHTML += `${items[i][0]} x ${q} = ₹${total}<br>`;
+      subtotal += itemTotal;
+      totalQty += q;
+
+      billHTML += `${items[i][0]} x ${q} = ₹${itemTotal}<br>`;
     }
   });
 
-  let type = document.getElementById("type").value.toLowerCase();
-  let packing = (type.includes("parcel")) ? 5 : 0;
+  document.getElementById("cartCount").innerText = totalQty;
+
+  let type = document.getElementById("type").value;
+  let packing = (type === "parcel") ? totalQty * 5 : 0;
 
   let final = subtotal + packing;
 
@@ -77,6 +87,13 @@ function calc(){
   document.getElementById("subtotal").innerText = "₹" + subtotal;
   document.getElementById("packing").innerText = "₹" + packing;
   document.getElementById("total").innerText = "₹" + final;
+}
+
+function clearCart(){
+  document.querySelectorAll(".qty").forEach(q=> q.innerText = 0);
+  document.getElementById("name").value = "";
+  document.getElementById("type").value = "dine";
+  calc();
 }
 
 function getOrder(){
@@ -96,7 +113,7 @@ function order(){
     alert("Add item first");
     return;
   }
-  alert("Check bill & proceed to payment");
+  alert("Proceed to payment");
 }
 
 function payNow(){
@@ -112,18 +129,33 @@ function sendBill(){
   let name=document.getElementById("name").value||"Customer";
   let type=document.getElementById("type").value||"N/A";
   let order=getOrder();
-  let subtotal=document.getElementById("subtotal").innerText;
-  let packing=document.getElementById("packing").innerText;
   let total=document.getElementById("total").innerText;
 
+  if(order.length===0){
+    alert("No items");
+    return;
+  }
+
+  let itemsText = order.join(", ");
+
+  // 📊 SEND TO GOOGLE SHEET
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      name: name,
+      type: type,
+      items: itemsText,
+      total: total
+    })
+  });
+
+  // 📲 WHATSAPP BILL
   let msg="ByteZone Bill%0A";
   msg+="Name: "+name+"%0A";
   msg+="Type: "+type+"%0A%0A";
 
   order.forEach(i=>msg+=i+"%0A");
 
-  msg+="%0ASubtotal: "+subtotal;
-  msg+="%0APacking: "+packing;
   msg+="%0ATotal: "+total;
 
   window.open(`https://wa.me/${phone}?text=${msg}`);
