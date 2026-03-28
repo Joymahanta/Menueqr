@@ -19,8 +19,13 @@ body {
 }
 
 button {
-  padding: 8px;
-  margin-top: 10px;
+  padding: 6px;
+  margin: 3px;
+}
+
+.timer {
+  margin-top: 5px;
+  color: #38bdf8;
 }
 </style>
 </head>
@@ -30,19 +35,29 @@ button {
 <h2 style="text-align:center;">🍳 Live Orders</h2>
 <div id="orders"></div>
 
+<audio id="sound">
+  <source src="https://www.soundjay.com/buttons/sounds/beep-07.mp3">
+</audio>
+
 <script>
 const API = "https://script.google.com/macros/s/AKfycbz17MiXqsjlAe6FyaJXPQ0r42-RSupYxVWCLH0tA3mzJsnKMtIyq07exh9569aZ82Pt/exec";
+
+let lastOrderCount = 0;
+let timers = {};
 
 async function loadOrders(){
   let res = await fetch(API + "?t=" + Date.now());
   let data = await res.json();
 
   let html = "";
+  let currentCount = 0;
 
   for(let i=1;i<data.length;i++){
     let row = data[i];
 
     if(row[5] === "Done") continue;
+
+    currentCount++;
 
     html += `
       <div class="card">
@@ -51,16 +66,65 @@ async function loadOrders(){
         🧾 ${row[3]}<br>
         💰 ${row[4]}<br>
 
-        <button onclick="markDone(${i+1}, '${row[1]}')">Done</button>
+        ⏱️ Set Time:<br>
+        ${[1,5,10,15,20].map(t => 
+          `<button onclick="startTimer(${i+1}, ${t}, '${row[1]}')">${t}m</button>`
+        ).join("")}
+
+        <div class="timer" id="timer-${i+1}"></div>
+
+        <button onclick="markDone(${i+1}, '${row[1]}')">✅ Done</button>
       </div>
     `;
   }
 
+  // 🔔 New order sound
+  if(currentCount > lastOrderCount){
+    document.getElementById("sound").play();
+  }
+
+  lastOrderCount = currentCount;
+
   document.getElementById("orders").innerHTML = html;
+}
+
+function startTimer(row, minutes, phone){
+  let totalSeconds = minutes * 60;
+
+  // 📲 Send time to customer
+  let msg = `Your order from ByteZone will be ready in ${minutes} minutes`;
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
+
+  if(timers[row]){
+    clearInterval(timers[row]);
+  }
+
+  timers[row] = setInterval(()=>{
+    totalSeconds--;
+
+    let min = Math.floor(totalSeconds / 60);
+    let sec = totalSeconds % 60;
+
+    document.getElementById(`timer-${row}`).innerText =
+      `⏳ ${min}:${sec.toString().padStart(2,"0")}`;
+
+    if(totalSeconds <= 0){
+      clearInterval(timers[row]);
+
+      // 🚨 ALERT + SOUND
+      alert("⚠️ Order time exceeded!");
+      document.getElementById("sound").play();
+    }
+
+  },1000);
 }
 
 async function markDone(row, phone){
   await fetch(API + "?action=update&row=" + row);
+
+  if(timers[row]){
+    clearInterval(timers[row]);
+  }
 
   let msg = "Your order from ByteZone is ready!";
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
